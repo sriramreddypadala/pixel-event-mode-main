@@ -388,20 +388,21 @@ export class GridRenderer {
     logoLeft: HTMLImageElement | null,
     logoRight: HTMLImageElement | null
   ) {
-    const padding = h * 0.05; // 5% padding
+    const padding = h * 0.02; // Reduced padding to 2% to maximize space
     const contentH = h - (padding * 2);
 
     // Stacked Layout:
-    // Top 70%: Logos (Side by Side)
-    // Bottom 30%: Slogan
+    // Top 75%: Logos (Side by Side) - Increased from 70%
+    // Bottom 25%: Slogan
 
-    const logoAreaH = contentH * 0.70;
-    const sloganAreaH = contentH * 0.30;
+    const logoAreaH = contentH * 0.75;
+    const sloganAreaH = contentH * 0.25;
     const logoY = y + padding;
     const sloganY = logoY + logoAreaH;
 
-    // Logo Dimensions - Larger now
-    const logoSize = Math.min(logoAreaH, w * 0.4); // Max 40% of width or full height of logo area
+    // Logo Dimensions - Enlarged
+    // Allow logos to take up almost half the width each (minus padding)
+    const logoSize = Math.min(logoAreaH, (w / 2) - (padding * 2));
 
     // Draw Left Logo (Client) - Float Left/Center-Left
     if (logoLeft) {
@@ -421,13 +422,13 @@ export class GridRenderer {
     this.ctx.textBaseline = 'middle';
 
     // Responsive Font Size for Slogan
-    const fontSize = Math.min(sloganAreaH * 0.8, w * 0.1);
+    const fontSize = Math.min(sloganAreaH * 0.9, w * 0.12);
     this.ctx.font = `900 ${fontSize}px "Inter", sans-serif`;
 
     const centerX = x + (w / 2);
     const sloganCenterY = sloganY + (sloganAreaH / 2);
 
-    this.ctx.fillText("HAPPY NEW YEAR 2026", centerX, sloganCenterY, w - (padding * 2));
+    this.ctx.fillText("NEW YEAR 2026", centerX, sloganCenterY, w - (padding * 2));
   }
 
   private drawLogoInBox(img: HTMLImageElement, x: number, y: number, w: number, h: number) {
