@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --pixxel-orange: #FF8C1A;
+    --pixxel-orange-glow: rgba(255, 140, 26, 0.6);
+    --pixxel-black: #0B0E14;
+    --pixxel-charcoal: #121826;
+    --pixxel-surface: #1A2032;
+  }
+
+  body {
+    @apply bg-pixxel-black dark:bg-pixxel-black text-gray-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .orange-glow {
+    box-shadow: 0 0 20px var(--pixxel-orange-glow);
+  }
+
+  .orange-glow-strong {
+    box-shadow: 0 0 40px var(--pixxel-orange-glow), 0 0 80px rgba(255, 140, 26, 0.3);
+  }
+
+  .pixel-border {
+    border-radius: 2px;
+  }
+
+  .pixel-border-lg {
+    border-radius: 4px;
+  }
+}
+
+/* Custom scrollbar with orange accents */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-pixxel-charcoal;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-pixxel-surface rounded-full;
+  transition: background-color 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pixxel-orange);
+  box-shadow: 0 0 10px var(--pixxel-orange-glow);
+}
+
+/* Smooth transitions */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Touch-friendly tap highlights with orange */
+button, a {
+  -webkit-tap-highlight-color: rgba(255, 140, 26, 0.2);
+}
+
+/* Prevent text selection on touch devices for UI elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Fullscreen video background */
+video {
+  object-fit: cover;
+}
+
+/* Orange ripple effect */
+@keyframes orange-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.ripple-orange {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-orange::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--pixxel-orange-glow) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+}
+
+.ripple-orange:active::after {
+  animation: orange-ripple 0.6s ease-out;
+}
+
+/* Print-specific styles */
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+}
+
