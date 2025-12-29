@@ -5,6 +5,10 @@ import { DPI_PRESETS } from '@/types/grid';
 // CANVAS-BASED GRID RENDERER (300 DPI PRODUCTION)
 // ====================================================
 
+// Asset Paths (Strictly using these paths)
+const LOGO_CLIENT = '/src/assets/pixel8_logo.jpeg';
+const LOGO_CUSTOMER = '/src/assets/logo for grid.jpeg';
+
 export class GridRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -57,6 +61,10 @@ export class GridRenderer {
     if (printAndCut) {
       this.drawCutLine();
     }
+
+    // Draw Footer (Branding)
+    // Always draw footer for print layouts to ensure branding presence
+    await this.drawFooter(grid);
 
     // Export as data URL
     return this.canvas.toDataURL(`image/${format}`, quality);
@@ -257,13 +265,13 @@ export class GridRenderer {
     const dashGap = Math.max(5, this.canvas.height * 0.01); // 1% of height, min 5px
 
     this.ctx.save();
-    
+
     // Draw dashed vertical line in the middle
     this.ctx.strokeStyle = '#FF0000'; // Red color for visibility
     this.ctx.lineWidth = lineWidth;
     this.ctx.setLineDash([dashLength, dashGap]);
     this.ctx.lineCap = 'round';
-    
+
     // Draw from top to bottom
     this.ctx.beginPath();
     this.ctx.moveTo(cutX, 0);
@@ -273,36 +281,36 @@ export class GridRenderer {
     // Draw registration marks at top and bottom for precise cutting
     const markSize = Math.max(8, this.canvas.width * 0.01); // 1% of width, min 8px
     const markOffset = markSize * 2;
-    
+
     // Top registration mark (L shape)
     this.ctx.strokeStyle = '#FF0000';
     this.ctx.lineWidth = lineWidth * 1.5;
     this.ctx.setLineDash([]); // Solid line for marks
-    
+
     // Left mark (L pointing right)
     this.ctx.beginPath();
     this.ctx.moveTo(cutX - markOffset, markSize);
     this.ctx.lineTo(cutX, markSize);
     this.ctx.lineTo(cutX, 0);
     this.ctx.stroke();
-    
+
     // Right mark (L pointing left)
     this.ctx.beginPath();
     this.ctx.moveTo(cutX + markOffset, markSize);
     this.ctx.lineTo(cutX, markSize);
     this.ctx.lineTo(cutX, 0);
     this.ctx.stroke();
-    
+
     // Bottom registration marks
     const bottomY = this.canvas.height - markSize;
-    
+
     // Left mark (L pointing right)
     this.ctx.beginPath();
     this.ctx.moveTo(cutX - markOffset, bottomY);
     this.ctx.lineTo(cutX, bottomY);
     this.ctx.lineTo(cutX, this.canvas.height);
     this.ctx.stroke();
-    
+
     // Right mark (L pointing left)
     this.ctx.beginPath();
     this.ctx.moveTo(cutX + markOffset, bottomY);
@@ -314,8 +322,136 @@ export class GridRenderer {
   }
 
   /**
-   * Load image from URL or data URL
+   * Draw Branding Footer
+   * Renders logos and slogan at the bottom of the print
    */
+  private async drawFooter(grid: GridTemplate): Promise<void> {
+    const footerHeight = this.canvas.height * 0.15; // 15% of height for footer
+    const footerY = this.canvas.height - footerHeight;
+    const isStrip = grid.id.includes('2x6');
+
+    this.ctx.save();
+
+    // 1. Draw Footer Background (White)
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fillRect(0, footerY, this.canvas.width, footerHeight);
+
+    // 2. Draw Separator Line (Optional, clean look)
+    // this.ctx.fillStyle = '#e5e7eb';
+    // this.ctx.fillRect(0, footerY, this.canvas.width, 2);
+
+    try {
+      // 3. Load Logos (Optimistic loading)
+      const [logoClient, logoCustomer] = await Promise.all([
+        this.loadImage(LOGO_CLIENT).catch(e => { console.warn('Failed to load client logo', e); return null; }),
+        this.loadImage(LOGO_CUSTOMER).catch(e => { console.warn('Failed to load customer logo', e); return null; })
+      ]);
+
+      // 4. Render Layouts
+      if (isStrip) {
+        // === DOUBLE FOOTER (For 2x6 Strips) ===
+        // We render the footer content TWICE: once for the left strip, once for the right.
+
+        const stripWidth = this.canvas.width / 2;
+
+        // Render Left Strip Footer
+        this.renderSingleFooterContent(
+          0, footerY, stripWidth, footerHeight,
+          logoClient, logoCustomer
+        );
+
+        // Render Right Strip Footer
+        this.renderSingleFooterContent(
+          stripWidth, footerY, stripWidth, footerHeight,
+          logoClient, logoCustomer
+        );
+
+      } else {
+        // === SINGLE FOOTER (For 4x6 / General) ===
+        this.renderSingleFooterContent(
+          0, footerY, this.canvas.width, footerHeight,
+          logoClient, logoCustomer
+        );
+      }
+    } catch (error) {
+      console.error('Error rendering footer:', error);
+    }
+
+    this.ctx.restore();
+  }
+
+  /**
+   * Helper to render footer content in a specific area
+   */
+  private renderSingleFooterContent(
+    x: number, y: number, w: number, h: number,
+    logoLeft: HTMLImageElement | null,
+    logoRight: HTMLImageElement | null
+  ) {
+    const padding = h * 0.05; // 5% padding
+    const contentH = h - (padding * 2);
+
+    // Stacked Layout:
+    // Top 70%: Logos (Side by Side)
+    // Bottom 30%: Slogan
+
+    const logoAreaH = contentH * 0.70;
+    const sloganAreaH = contentH * 0.30;
+    const logoY = y + padding;
+    const sloganY = logoY + logoAreaH;
+
+    // Logo Dimensions - Larger now
+    const logoSize = Math.min(logoAreaH, w * 0.4); // Max 40% of width or full height of logo area
+
+    // Draw Left Logo (Client) - Float Left/Center-Left
+    if (logoLeft) {
+      // Position logo: Start at x + padding, centered vertically in logoArea
+      this.drawLogoInBox(logoLeft, x + padding, logoY, logoSize, logoAreaH);
+    }
+
+    // Draw Right Logo (Customer) - Float Right/Center-Right
+    if (logoRight) {
+      // Position logo: End at x + w - padding
+      this.drawLogoInBox(logoRight, x + w - logoSize - padding, logoY, logoSize, logoAreaH);
+    }
+
+    // Draw Slogan (Centered Below)
+    this.ctx.fillStyle = '#000000';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+
+    // Responsive Font Size for Slogan
+    const fontSize = Math.min(sloganAreaH * 0.8, w * 0.1);
+    this.ctx.font = `900 ${fontSize}px "Inter", sans-serif`;
+
+    const centerX = x + (w / 2);
+    const sloganCenterY = sloganY + (sloganAreaH / 2);
+
+    this.ctx.fillText("HAPPY NEW YEAR 2026", centerX, sloganCenterY, w - (padding * 2));
+  }
+
+  private drawLogoInBox(img: HTMLImageElement, x: number, y: number, w: number, h: number) {
+    // Contain logic
+    const imgRatio = img.width / img.height;
+    const targetRatio = w / h;
+
+    let renderW = w;
+    let renderH = h;
+    let renderX = x;
+    let renderY = y;
+
+    if (imgRatio > targetRatio) {
+      // Image is wider
+      renderH = w / imgRatio;
+      renderY = y + (h - renderH) / 2;
+    } else {
+      // Image is taller
+      renderW = h * imgRatio;
+      renderX = x + (w - renderW) / 2;
+    }
+
+    this.ctx.drawImage(img, renderX, renderY, renderW, renderH);
+  }
   private loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new Image();

@@ -90,13 +90,7 @@ export function GridSelector({
                 boxShadow: '0 0 50px rgba(255, 140, 26, 0.4), 0 20px 60px rgba(0,0,0,0.5)',
               } : {}}
             >
-              {/* Camera Count Badge */}
-              <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                  <ImageIcon className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-xl font-black text-white">{grid.stillCount}</span>
-              </div>
+              {/* Camera Count Badge REMOVED as per request */}
 
               {/* Selection Indicator */}
               <AnimatePresence>
@@ -112,63 +106,73 @@ export function GridSelector({
                 )}
               </AnimatePresence>
 
-              {/* Tilted Strips Container */}
-              <div className="flex-1 relative flex items-center justify-center p-8 mt-12 overflow-hidden">
-                <div className="relative w-full h-[320px] flex items-center justify-center gap-4">
+              {/* LIVE PREVIEW AREA */}
+              <div className="flex-1 relative flex items-center justify-center p-8 mt-4 overflow-hidden">
 
-                  {/* Left Strip */}
-                  <motion.div
-                    className="flex flex-col gap-3 p-2 bg-white rounded-2xl shadow-2xl relative z-10"
-                    style={{
-                      rotate: -6,
-                      translateY: -20,
-                      width: '45%'
-                    }}
-                  >
-                    {leftSlots.length > 0 ? leftSlots.map((slot, i) => (
-                      <div
-                        key={slot.id}
-                        className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center relative overflow-hidden"
-                      >
-                        <span className="text-white/20 text-4xl font-black">{i + 1}</span>
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-                      </div>
-                    )) : (
-                      <div className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center opacity-30">
-                        <span className="text-white/10 text-4xl font-black">?</span>
-                      </div>
-                    )}
-                  </motion.div>
-
-                  {/* Right Strip */}
-                  <motion.div
-                    className="flex flex-col gap-3 p-2 bg-white rounded-2xl shadow-2xl relative z-0"
-                    style={{
-                      rotate: 6,
-                      translateY: 20,
-                      marginLeft: '-10%',
-                      width: '45%'
-                    }}
-                  >
-                    {rightSlots.length > 0 ? rightSlots.map((slot, i) => (
-                      <div
-                        key={slot.id}
-                        className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center relative overflow-hidden"
-                      >
-                        <span className="text-white/20 text-4xl font-black">{leftSlots.length + i + 1}</span>
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-                      </div>
-                    )) : (
-                      // Handle case where right strip might be empty (e.g. single photo grids)
-                      // Show dummy slots to keep the "tilted strip" look if requested
-                      [1, 2].map(n => (
-                        <div key={n} className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center opacity-30">
+                {/* 2x6 STRIPS (Tilted 3D Look) */}
+                {grid.id.includes('2x6') ? (
+                  <div className="relative w-full h-[320px] flex items-center justify-center gap-4">
+                    {/* Left Strip */}
+                    <motion.div
+                      className="flex flex-col gap-3 p-2 bg-white rounded-2xl shadow-2xl relative z-10"
+                      style={{ rotate: -6, translateY: -20, width: '45%' }}
+                    >
+                      {leftSlots.length > 0 ? leftSlots.map((slot, i) => (
+                        <div key={slot.id} className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center relative overflow-hidden">
+                          <span className="text-white/20 text-4xl font-black">{i + 1}</span>
+                        </div>
+                      )) : (
+                        <div className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center opacity-30">
                           <span className="text-white/10 text-4xl font-black">?</span>
                         </div>
-                      ))
-                    )}
-                  </motion.div>
-                </div>
+                      )}
+                    </motion.div>
+
+                    {/* Right Strip */}
+                    <motion.div
+                      className="flex flex-col gap-3 p-2 bg-white rounded-2xl shadow-2xl relative z-0"
+                      style={{ rotate: 6, translateY: 20, marginLeft: '-10%', width: '45%' }}
+                    >
+                      {rightSlots.length > 0 ? rightSlots.map((slot, i) => (
+                        <div key={slot.id} className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center relative overflow-hidden">
+                          <span className="text-white/20 text-4xl font-black">{leftSlots.length + i + 1}</span>
+                        </div>
+                      )) : (
+                        [1, 2].map(n => (
+                          <div key={n} className="w-full aspect-square bg-[#121826] rounded-lg border-2 border-white/10 flex items-center justify-center opacity-30">
+                            <span className="text-white/10 text-4xl font-black">?</span>
+                          </div>
+                        ))
+                      )}
+                    </motion.div>
+                  </div>
+                ) : (
+                  /* 4x6 LAYOUTS (Flat, Clean, Sketch Match) */
+                  <div className="relative w-full h-[340px] bg-white p-3 rounded-lg shadow-2xl flex flex-col">
+                    {/* Inner Dark Area */}
+                    <div className="flex-1 w-full bg-[#121826] border-2 border-black/10 relative overflow-hidden">
+
+                      {/* Single Photo Logic */}
+                      {grid.stillCount === 1 && (
+                        <div className="w-full h-full flex items-center justify-center border-4 border-white/5">
+                          <span className="text-white/10 text-8xl font-black">1</span>
+                        </div>
+                      )}
+
+                      {/* 2x2 Grid Logic */}
+                      {grid.stillCount === 4 && !grid.id.includes('2x6') && (
+                        <div className="w-full h-full grid grid-cols-2 grid-rows-2 gap-1 p-1">
+                          {[1, 2, 3, 4].map(n => (
+                            <div key={n} className="w-full h-full border-2 border-white/10 flex items-center justify-center bg-white/5">
+                              <span className="text-white/20 text-4xl font-black">{n}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Grid Info Section */}
@@ -178,9 +182,6 @@ export function GridSelector({
                     <h3 className="text-2xl font-black text-white mb-1 tracking-tight">
                       {grid.name}
                     </h3>
-                    <p className="text-pixxel-orange font-bold text-lg">
-                      {grid.stillCount} Photo Slots
-                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-white/50 text-sm font-bold mb-1 uppercase tracking-widest">Price</p>

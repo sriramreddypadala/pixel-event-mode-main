@@ -90,7 +90,7 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
   // Right strip: Photo 3 (top), Photo 4 (bottom)
   {
     id: 'strip_2x6_2separate_strips',
-    name: '2×6" Two Strips (4 Photos)',
+    name: '2×6" Strips',
     stillCount: 4,
     price: 1,
     aspectRatio: '4:6',
@@ -100,13 +100,13 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
     backgroundColor: '#ffffff',
     slots: [
       // Left strip - Photo 1 (top)
-      { id: 's1', x: 2.5, y: 5, width: 45, height: 42.5, radius: 0, zIndex: 1 },
+      { id: 's1', x: 2.5, y: 5, width: 45, height: 38, radius: 0, zIndex: 1 },
       // Left strip - Photo 2 (bottom)
-      { id: 's2', x: 2.5, y: 52.5, width: 45, height: 42.5, radius: 0, zIndex: 1 },
+      { id: 's2', x: 2.5, y: 47, width: 45, height: 38, radius: 0, zIndex: 1 },
       // Right strip - Photo 3 (top)
-      { id: 's3', x: 52.5, y: 5, width: 45, height: 42.5, radius: 0, zIndex: 1 },
+      { id: 's3', x: 52.5, y: 5, width: 45, height: 38, radius: 0, zIndex: 1 },
       // Right strip - Photo 4 (bottom)
-      { id: 's4', x: 52.5, y: 52.5, width: 45, height: 42.5, radius: 0, zIndex: 1 },
+      { id: 's4', x: 52.5, y: 47, width: 45, height: 38, radius: 0, zIndex: 1 },
     ],
     isEnabled: true,
     sortOrder: 1,
@@ -118,7 +118,7 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
   // Each strip has 3 unique photos: Photo 1, 2, 3 on left; 4, 5, 6 on right
   {
     id: 'strip_2x6_6photos',
-    name: '2×6" Strips (6 Photos)',
+    name: '2×6" Strips (6-Shot)',
     stillCount: 6,
     price: 1,
     aspectRatio: '4:6',
@@ -127,14 +127,15 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
     previewType: 'strip',
     backgroundColor: '#ffffff',
     slots: [
-      // Left strip - Unique Photos 1, 2, 3
-      { id: 's1', x: 2.5, y: 3, width: 45, height: 30, radius: 0, zIndex: 1 },
-      { id: 's2', x: 2.5, y: 35, width: 45, height: 30, radius: 0, zIndex: 1 },
-      { id: 's3', x: 2.5, y: 67, width: 45, height: 30, radius: 0, zIndex: 1 },
+      // Left strip - Unique Photos 1, 2, 3 (Rectangular 4:3 Landscape)
+      // Width: 40% (480px), Height: 20% (360px) -> 4:3 ratio
+      { id: 's1', x: 5, y: 5, width: 40, height: 20, radius: 0, zIndex: 1 },
+      { id: 's2', x: 5, y: 28, width: 40, height: 20, radius: 0, zIndex: 1 },
+      { id: 's3', x: 5, y: 51, width: 40, height: 20, radius: 0, zIndex: 1 },
       // Right strip - Unique Photos 4, 5, 6
-      { id: 's4', x: 52.5, y: 3, width: 45, height: 30, radius: 0, zIndex: 1 },
-      { id: 's5', x: 52.5, y: 35, width: 45, height: 30, radius: 0, zIndex: 1 },
-      { id: 's6', x: 52.5, y: 67, width: 45, height: 30, radius: 0, zIndex: 1 },
+      { id: 's4', x: 55, y: 5, width: 40, height: 20, radius: 0, zIndex: 1 },
+      { id: 's5', x: 55, y: 28, width: 40, height: 20, radius: 0, zIndex: 1 },
+      { id: 's6', x: 55, y: 51, width: 40, height: 20, radius: 0, zIndex: 1 },
     ],
     isEnabled: true,
     sortOrder: 2,
@@ -145,7 +146,7 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
   // 3️⃣ 4×6 Inch – Single Photo
   {
     id: 'single_4x6',
-    name: '4×6" Single Photo',
+    name: '4×6" Single',
     stillCount: 1,
     price: 1,
     aspectRatio: '4:6',
@@ -154,8 +155,8 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
     previewType: 'grid',
     backgroundColor: '#ffffff',
     slots: [
-      // Single photo fills entire frame
-      { id: 's1', x: 0, y: 0, width: 100, height: 100, radius: 0, zIndex: 1 },
+      // Single photo fills top 85% with margin
+      { id: 's1', x: 2.5, y: 2.5, width: 95, height: 80, radius: 0, zIndex: 1 },
     ],
     isEnabled: true,
     sortOrder: 3,
@@ -166,7 +167,7 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
   // 4️⃣ 4×6 Inch – Grid (4 Photos)
   {
     id: 'grid_4x6_2x2',
-    name: '4×6" Grid (2×2)',
+    name: '4×6" Grid',
     stillCount: 4,
     price: 1,
     aspectRatio: '4:6',
@@ -176,13 +177,13 @@ export const FIXED_GRID_TEMPLATES: GridTemplate[] = [
     backgroundColor: '#ffffff',
     slots: [
       // Top-left
-      { id: 's1', x: 2.5, y: 2.5, width: 45, height: 45, radius: 0, zIndex: 1 },
+      { id: 's1', x: 2.5, y: 2.5, width: 45, height: 39, radius: 0, zIndex: 1 },
       // Top-right
-      { id: 's2', x: 52.5, y: 2.5, width: 45, height: 45, radius: 0, zIndex: 1 },
+      { id: 's2', x: 52.5, y: 2.5, width: 45, height: 39, radius: 0, zIndex: 1 },
       // Bottom-left
-      { id: 's3', x: 2.5, y: 52.5, width: 45, height: 45, radius: 0, zIndex: 1 },
+      { id: 's3', x: 2.5, y: 43.5, width: 45, height: 39, radius: 0, zIndex: 1 },
       // Bottom-right
-      { id: 's4', x: 52.5, y: 52.5, width: 45, height: 45, radius: 0, zIndex: 1 },
+      { id: 's4', x: 52.5, y: 43.5, width: 45, height: 39, radius: 0, zIndex: 1 },
     ],
     isEnabled: true,
     sortOrder: 4,

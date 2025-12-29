@@ -7,6 +7,7 @@ import { PhotoPreview } from '@/components/machine/PhotoPreview';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { useMachineStore } from '@/store/machineStore';
 import { generatePhotoId } from '@/utils/helpers';
+import { InstructionModal } from '@/components/machine/InstructionModal';
 
 export function CaptureScreen() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export function CaptureScreen() {
   const [currentFrame, setCurrentFrame] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastHandledPhotoCount = useRef(-1); // Fix for continuous capture
+  const [isShowingInstructions, setIsShowingInstructions] = useState(true);
 
   // Initialize Camera
   useEffect(() => {
@@ -153,11 +155,11 @@ export function CaptureScreen() {
   }, [capturedPhotos.length, totalFrames, showCountdown, isWaitingForNext]);
 
   const handleTakePhoto = useCallback(() => {
-    if (showCountdown) return; // Prevent double clicks
+    if (showCountdown || isShowingInstructions) return; // Prevent double clicks and block if instructions visible
     setIsWaitingForNext(false); // Safety reset for manual triggers
     setCountdown(3);
     setShowCountdown(true);
-  }, [showCountdown]);
+  }, [showCountdown, isShowingInstructions]);
 
   const handleRetake = (photoId: string) => {
     removeCapturedPhoto(photoId);
@@ -469,6 +471,12 @@ export function CaptureScreen() {
         totalPhotos={totalFrames}
         countdown={countdown}
         isVisible={showCountdown}
+      />
+
+      {/* Instruction Pop-up */}
+      <InstructionModal
+        isVisible={isShowingInstructions}
+        onDismiss={() => setIsShowingInstructions(false)}
       />
     </div>
   );
